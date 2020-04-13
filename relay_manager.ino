@@ -26,6 +26,11 @@
    -------------------------------------
 */
 
+/*
+ * TODO:
+ * wake-up behavior - keep state or turn off
+ */
+
 struct device
 {
   byte inputPin;
