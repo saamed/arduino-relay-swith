@@ -8,7 +8,7 @@
 
 #define DEVICE_COUNT 6
 
-#define LOOP_DELAY 1000
+#define LOOP_DELAY 100
 
 #define LOW_TRIGGERED 0
 #define HIGH_TRIGGERED 1
@@ -27,9 +27,9 @@
 */
 
 /*
- * TODO:
- * wake-up behavior - keep state or turn off
- */
+   TODO:
+   wake-up behavior setting - keep state or turn off
+*/
 
 struct device
 {
@@ -53,7 +53,12 @@ void setup()
     EEPROM.get(address, data[i]);
 
     setPinModes(&data[i]);
-    if (data[i].inputPin == 255 || data[i].inputPin == 0) {
+    setWakeUpState(&data[i]);
+    if (data[i].inputPin == 255 || data[i].inputPin == 0 || data[i].relayPin == 0) {
+#if DEBUG
+      Serial.print("setting pin numbers deviceId = ");
+      Serial.println(i);
+#endif
       setPinNumbers(&data[i], i);
       modified = true;
     }
@@ -110,6 +115,15 @@ void setPinModes(device *devicePtr)
   devicePtr->pinsEqual = digitalRead(devicePtr->inputPin) == HIGH;
 }
 
+void setWakeUpState(device *devicePtr) {
+  devicePtr->isOn = false;
+  if (devicePtr->isHighState) {
+    digitalWrite(devicePtr->relayPin, LOW);
+  } else {
+    digitalWrite(devicePtr->relayPin, HIGH);
+  }
+}
+
 void handleCommand(String command, String params)
 {
   if (command.equals(ON))
@@ -139,6 +153,10 @@ void turnOn(String params)
     Serial.print(deviceNumber);
     Serial.print(" isHighState = ");
     Serial.println(data[deviceNumber].isHighState);
+    Serial.print("data[deviceNumber].isOn = ");
+    Serial.println(data[deviceNumber].isOn);
+    Serial.print("data[deviceNumber].relayPin = ");
+    Serial.println(data[deviceNumber].relayPin);
 #endif
 
     if (data[deviceNumber].isOn)
