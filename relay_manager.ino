@@ -228,8 +228,8 @@ void updateDeviceRelay(byte deviceId)
   Serial.print("data[deviceId].inputPin = ");
   Serial.println(data[deviceId].inputPin);
 
-  Serial.print("data[deviceId].outputPin = ");
-  Serial.println(data[deviceId].outputPin);
+  Serial.print("data[deviceId].relayPin = ");
+  Serial.println(data[deviceId].relayPin);
 
   Serial.print("data[deviceId].pinsEqual = ");
   Serial.println(data[deviceId].pinsEqual);
