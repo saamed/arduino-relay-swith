@@ -8,7 +8,7 @@
 
 #define DEVICE_COUNT 6
 
-#define LOOP_DELAY 100
+#define LOOP_DELAY 10
 
 #define LOW_TRIGGERED 0
 #define HIGH_TRIGGERED 1
@@ -133,7 +133,7 @@ void handleCommand(String command, String params)
 
   if (command.equals(OFF))
   {
-    turnOff(params);
+    turnOff(params, false);
   }
 
   if (command.equals(MODE))
@@ -182,7 +182,7 @@ void turnOn(String params)
   }
 }
 
-void turnOff(String params)
+void turnOff(String params, bool force)
 {
   int deviceNumber = params.toInt();
 
@@ -196,7 +196,7 @@ void turnOff(String params)
     Serial.println(data[deviceNumber].isHighState);
 #endif
 
-    if (!data[deviceNumber].isOn)
+    if (!force && !data[deviceNumber].isOn)
       return;
 
     if (data[deviceNumber].isHighState)
@@ -235,6 +235,8 @@ void changeTriggering(String params)
   if (data[deviceNumber].isHighState != (mode == HIGH_TRIGGERED)) {
     data[deviceNumber].isHighState = mode == HIGH_TRIGGERED;
     EEPROM.put(getDeviceConfigAddress(deviceNumber), data[deviceNumber]);
+
+    turnOff(String(deviceNumber), true);
   }
 }
 
@@ -264,7 +266,7 @@ void updateDeviceRelay(byte deviceId)
 #if DEBUG
       Serial.println("turning off");
 #endif
-      turnOff(String(deviceId));
+      turnOff(String(deviceId), false);
     }
     else
     {
